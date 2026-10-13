@@ -87,6 +87,7 @@ export async function handleUpload(
   onProgress?: (progressPct: number) => void
 ): Promise<ComplaintSubmission> {
   const { db: firestoreDb, storage: firestoreStorage, live } = getFirebaseServices();
+  console.log('handleUpload initiated. Firebase live:', live);
   const randomTracking = `CIV-${Math.floor(1000 + Math.random() * 9000)}`;
 
   // PATH A: Real Firebase Storage + Firestore (when configured)
@@ -97,46 +98,61 @@ export async function handleUpload(
       const storagePath = `complaints/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
       const storageRef = ref(firestoreStorage, storagePath);
       const uploadTask = uploadBytesResumable(storageRef, file);
+      
+      const timeoutPromise = new Promise<void>((_, reject) =>
+        setTimeout(() => {
+          uploadTask.cancel();
+          reject(new Error('Upload timed out after 30 seconds'));
+        }, 30000)
+      );
 
-      await new Promise<void>((resolve, reject) => {
-        uploadTask.on(
-          'state_changed',
-          (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            if (onProgress) onProgress(Math.round(progress));
-          },
-          (error) => reject(error),
-          async () => {
-            downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-            resolve();
-          }
-        );
-      });
+      await Promise.race([
+        new Promise<void>((resolve, reject) => {
+          uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              if (onProgress) onProgress(Math.round(progress));
+            },
+            (error) => reject(error),
+            async () => {
+              downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+              resolve();
+            }
+          );
+        }),
+        timeoutPromise,
+      ]);
     }
 
     const complaintsCol = collection(firestoreDb, 'complaints');
-    const docRef = await addDoc(complaintsCol, {
-      ...complaintData,
-      trackingNumber: randomTracking,
-      imageUrl: downloadUrl || null,
-      imageFileName: file?.name || null,
-      status: 'Received' as ComplaintStatus,
-      createdAt: serverTimestamp(),
-    });
+    try {
+      const docRef = await addDoc(complaintsCol, {
+        ...complaintData,
+        trackingNumber: randomTracking,
+        imageUrl: downloadUrl || null,
+        imageFileName: file?.name || null,
+        status: 'Received' as ComplaintStatus,
+        createdAt: serverTimestamp(),
+      });
 
-    const submission: ComplaintSubmission = {
-      id: docRef.id,
-      firestoreDocId: docRef.id,
-      trackingNumber: randomTracking,
-      ...complaintData,
-      imageUrl: downloadUrl,
-      imageFileName: file?.name,
-      status: 'Received',
-      createdAt: Date.now(),
-    };
+      const submission: ComplaintSubmission = {
+        id: docRef.id,
+        firestoreDocId: docRef.id,
+        trackingNumber: randomTracking,
+        ...complaintData,
+        imageUrl: downloadUrl,
+        imageFileName: file?.name,
+        status: 'Received',
+        createdAt: Date.now(),
+      };
 
-    saveLocalRecord(submission);
-    return submission;
+      saveLocalRecord(submission);
+      return submission;
+    } catch (error) {
+      console.error('Error submitting complaint to Firestore:', error);
+      throw error;
+    }
   }
 
   // PATH B: Seamless Preview Simulation (Placeholders active)
@@ -184,6 +200,7 @@ function fileToDataUrl(file: File): Promise<string> {
 export async function fetchComplaints(): Promise<ComplaintSubmission[]> {
   const { db, live } = getFirebaseServices();
   if (!live || !db) {
+    console.log('Firebase not live, returning empty complaints list.');
     return [];
   }
 
