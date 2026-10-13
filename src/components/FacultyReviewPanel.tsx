@@ -19,7 +19,11 @@ import { DoodleCheckCircle, DoodleSprout, DoodleSparkle, DoodleCamera } from './
 
 interface FacultyReviewPanelProps {
   complaints: ComplaintSubmission[];
-  onResolve: (complaintId: string, resolutionNote?: string, resolutionImageUrl?: string) => void;
+  onResolve: (
+    complaintId: string,
+    resolutionNote?: string,
+    file?: File
+  ) => void;
 }
 
 export const FacultyReviewPanel: React.FC<FacultyReviewPanelProps> = ({
@@ -30,6 +34,7 @@ export const FacultyReviewPanel: React.FC<FacultyReviewPanelProps> = ({
   const [resolvingComplaint, setResolvingComplaint] = useState<ComplaintSubmission | null>(null);
   const [resolutionNote, setResolutionNote] = useState('');
   const [resolutionPhotoPreview, setResolutionPhotoPreview] = useState<string | null>(null);
+  const [resolutionPhotoFile, setResolutionPhotoFile] = useState<File | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -49,6 +54,7 @@ export const FacultyReviewPanel: React.FC<FacultyReviewPanelProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setResolutionPhotoFile(file);
       const reader = new FileReader();
       reader.onload = (uploadEvent) => {
         setResolutionPhotoPreview((uploadEvent.target?.result as string) || null);
@@ -62,7 +68,7 @@ export const FacultyReviewPanel: React.FC<FacultyReviewPanelProps> = ({
     onResolve(
       resolvingComplaint.id,
       resolutionNote.trim() || undefined,
-      resolutionPhotoPreview || undefined
+      resolutionPhotoFile || undefined
     );
     setResolvingComplaint(null);
   };

@@ -10,6 +10,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { ComplaintSubmission, LocationData, PriorityLevel, ComplaintStatus } from '../types/civic';
+import { compressImage } from './imageUtils';
 
 /**
  * ============================================================================
@@ -89,9 +90,11 @@ export async function handleUpload(
 
     if (file) {
       try {
-        base64Image = await fileToDataUrl(file);
+        base64Image = await compressImage(file);
       } catch (err) {
-        console.error('Failed to convert image to Base64:', err);
+        console.error('Failed to compress image:', err);
+        // Fallback to original if compression fails
+        base64Image = await fileToDataUrl(file);
       }
     }
 
@@ -264,13 +267,20 @@ export async function resolveComplaintRecord(
   complaintId: string,
   resolutionNote?: string,
   facultyEmail?: string,
-  resolutionImageUrl?: string
+  file?: File
 ): Promise<ComplaintSubmission | null> {
   const { db, live } = getFirebaseServices();
   if (!live || !db) return null;
 
+  let resolutionImageUrl: string | undefined = undefined;
+  if (file) {
+    try {
+      resolutionImageUrl = await compressImage(file);
+    } catch (err) {
+      console.error('Failed to compress resolution image:', err);
+    }
+  }
   try {
-    console.log('Resolving complaint:', complaintId);
     const docRef = doc(db, 'complaints', complaintId);
     const updateData: any = {
       status: 'Resolved',

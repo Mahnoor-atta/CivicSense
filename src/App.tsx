@@ -225,7 +225,7 @@ export default function App() {
   const handleFacultyResolve = async (
     complaintId: string,
     resolutionNote?: string,
-    resolutionImageUrl?: string
+    file?: File
   ) => {
     if (!currentUser) return;
     console.log('Resolving complaint for user:', currentUser.email, 'complaintId:', complaintId);
@@ -234,7 +234,7 @@ export default function App() {
       complaintId,
       resolutionNote,
       currentUser.email,
-      resolutionImageUrl
+      file
     );
     console.log('Resolution result:', updated);
     if (updated) {
@@ -311,7 +311,9 @@ export default function App() {
       );
 
       setSubmittedData(submission);
-      setSubmissionsList(await fetchComplaints());
+      setSubmissionsList((prev) => [submission, ...prev]); // Immediate update
+      const latest = await fetchComplaints(); // Sync with server
+      setSubmissionsList(latest);
       triggerToast(`Complaint ${submission.trackingNumber} successfully logged!`);
     } catch (err: any) {
       console.error('Submission failed:', err);
