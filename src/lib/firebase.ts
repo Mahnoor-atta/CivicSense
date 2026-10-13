@@ -7,13 +7,6 @@ import {
   Firestore,
   getDocs,
 } from 'firebase/firestore';
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  FirebaseStorage,
-} from 'firebase/storage';
 import { ComplaintSubmission, LocationData, PriorityLevel, ComplaintStatus } from '../types/civic';
 
 /**
@@ -47,20 +40,18 @@ export function isFirebaseConfigured(): boolean {
 // Lazy initialization of Firebase instances
 let app: FirebaseApp | null = null;
 let db: Firestore | null = null;
-let storage: FirebaseStorage | null = null;
 
 export function getFirebaseServices() {
   if (isFirebaseConfigured()) {
     try {
       app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
       db = getFirestore(app);
-      storage = getStorage(app);
-      return { app, db, storage, live: true };
+      return { app, db, live: true };
     } catch (err) {
       console.warn('Firebase initialization failed with provided config:', err);
     }
   }
-  return { app: null, db: null, storage: null, live: false };
+  return { app: null, db: null, live: false };
 }
 
 export interface ComplaintUploadPayload {
@@ -86,43 +77,20 @@ export async function handleUpload(
   complaintData: ComplaintUploadPayload,
   onProgress?: (progressPct: number) => void
 ): Promise<ComplaintSubmission> {
-  const { db: firestoreDb, storage: firestoreStorage, live } = getFirebaseServices();
+  const { db: firestoreDb, live } = getFirebaseServices();
   console.log('handleUpload initiated. Firebase live:', live);
   const randomTracking = `CIV-${Math.floor(1000 + Math.random() * 9000)}`;
 
-  // PATH A: Real Firebase Storage + Firestore (when configured)
-  if (live && firestoreDb && firestoreStorage) {
-    let downloadUrl: string | undefined = undefined;
+  // PATH A: Real Firebase Firestore (when configured)
+  if (live && firestoreDb) {
+    let base64Image: string | undefined = undefined;
 
     if (file) {
-      const storagePath = `complaints/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
-      const storageRef = ref(firestoreStorage, storagePath);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-      
-      const timeoutPromise = new Promise<void>((_, reject) =>
-        setTimeout(() => {
-          uploadTask.cancel();
-          reject(new Error('Upload timed out after 30 seconds'));
-        }, 30000)
-      );
-
-      await Promise.race([
-        new Promise<void>((resolve, reject) => {
-          uploadTask.on(
-            'state_changed',
-            (snapshot) => {
-              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              if (onProgress) onProgress(Math.round(progress));
-            },
-            (error) => reject(error),
-            async () => {
-              downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-              resolve();
-            }
-          );
-        }),
-        timeoutPromise,
-      ]);
+      try {
+        base64Image = await fileToDataUrl(file);
+      } catch (err) {
+        console.error('Failed to convert image to Base64:', err);
+      }
     }
 
     const complaintsCol = collection(firestoreDb, 'complaints');
@@ -130,7 +98,7 @@ export async function handleUpload(
       const dataToSave: any = {
         ...complaintData,
         trackingNumber: randomTracking,
-        imageUrl: downloadUrl || null,
+        imageUrl: base64Image || null,
         imageFileName: file?.name || null,
         status: 'Received' as ComplaintStatus,
         createdAt: serverTimestamp(),
