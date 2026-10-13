@@ -266,3 +266,17 @@ export async function resolveComplaintRecord(
 ): Promise<ComplaintSubmission | null> {
   return null; // Placeholder for now.
 }
+
+/**
+ * Saves a complaint submission to localStorage.
+ */
+function saveLocalRecord(submission: ComplaintSubmission) {
+  try {
+    const existing = localStorage.getItem('civic_complaints');
+    const records = existing ? JSON.parse(existing) : [];
+    records.push(submission);
+    localStorage.setItem('civic_complaints', JSON.stringify(records));
+  } catch (err) {
+    console.error('Failed to save complaint locally:', err);
+  }
+}
