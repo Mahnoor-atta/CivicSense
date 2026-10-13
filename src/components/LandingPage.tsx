@@ -35,7 +35,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
     <div className="min-h-screen bg-[#FDFBF7] text-[#111113] flex flex-col justify-between selection:bg-[#8DA399]/20 selection:text-[#3B3A45]">
       {/* Top Navigation */}
       <header className="sticky top-0 z-40 bg-[#FDFBF7]/90 backdrop-blur-md border-b border-[#8DA399]/20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-[#EBF0ED] border border-[#8DA399]/30 flex items-center justify-center text-[#8DA399] shadow-xs">
               <DoodleCivicLogo className="w-6 h-6 text-[#8DA399]" />
@@ -61,11 +61,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       </header>
 
       {/* Hero Section */}
-      <main className="flex-1">
-        <section className="max-w-5xl mx-auto px-4 sm:px-6 pt-12 pb-16 text-center space-y-6">
+      <main className="flex-1 flex flex-col justify-center">
+        <section className="max-w-6xl mx-auto px-6 sm:px-10 py-8 sm:py-12 text-center space-y-5">
           {/* Soft Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EBF0ED] text-xs font-medium text-[#6E867B] border border-[#8DA399]/25 shadow-2xs">
-            <DoodleHeart className="w-4 h-4 text-[#8DA399]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EBF0ED] text-xs font-medium text-[#6E867B] border border-[#8DA399]/25 shadow-2xs">
+            <DoodleHeart className="w-3.5 h-3.5 text-[#8DA399]" />
             <span>Citizen-First Municipal Care & Rapid Response</span>
           </div>
 
@@ -128,7 +128,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         </section>
 
         {/* Feature Highlights Section */}
-        <section id="features" className="max-w-5xl mx-auto px-4 sm:px-6 py-12 space-y-8">
+        <section id="features" className="w-full max-w-6xl mx-auto px-6 sm:px-10 py-12 space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-2xl font-bold text-[#4A4955]">
               Designed for Seamless Civic Collaboration
@@ -181,7 +181,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         </section>
 
         {/* Role Workflows Section */}
-        <section id="how-it-works" className="max-w-5xl mx-auto px-4 sm:px-6 py-12 space-y-8">
+        <section id="how-it-works" className="w-full max-w-6xl mx-auto px-6 sm:px-10 py-12 space-y-8">
           <div className="text-center space-y-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EBF0ED] text-xs font-semibold text-[#6E867B]">
               <DoodleCivicLogo className="w-3.5 h-3.5 text-[#8DA399]" />
@@ -274,7 +274,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
         </section>
 
         {/* Final CTA Banner */}
-        <section className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+        <section className="w-full max-w-6xl mx-auto px-6 sm:px-10 py-12">
           <div className="rounded-[1.5rem] border border-[#8DA399]/30 bg-[#EBF0ED]/80 p-8 sm:p-10 text-center space-y-4 shadow-xs">
             <h3 className="text-2xl font-bold text-[#4A4955]">
               Ready to report or review municipal issues?
