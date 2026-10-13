@@ -182,11 +182,15 @@ export async function fetchComplaints(): Promise<ComplaintSubmission[]> {
   try {
     const complaintsCol = collection(db, 'complaints');
     const snapshot = await getDocs(complaintsCol);
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      firestoreDocId: doc.id,
-      ...doc.data(),
-    })) as ComplaintSubmission[];
+    return snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        firestoreDocId: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate ? data.createdAt.toDate().getTime() : data.createdAt,
+      };
+    }) as ComplaintSubmission[];
   } catch (err) {
     console.error('Failed to fetch complaints:', err);
     return [];
@@ -265,6 +269,7 @@ export async function resolveComplaintRecord(
   if (!live || !db) return null;
 
   try {
+    console.log('Resolving complaint:', complaintId);
     const docRef = doc(db, 'complaints', complaintId);
     await updateDoc(docRef, {
       status: 'Resolved',
@@ -273,6 +278,7 @@ export async function resolveComplaintRecord(
       resolutionImageUrl: resolutionImageUrl,
       updatedAt: serverTimestamp(),
     });
+    console.log('Complaint resolved successfully in Firestore');
 
     return { id: complaintId, trackingNumber: '' } as ComplaintSubmission;
   } catch (err) {

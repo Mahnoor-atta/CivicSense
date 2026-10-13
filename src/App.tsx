@@ -228,6 +228,7 @@ export default function App() {
     resolutionImageUrl?: string
   ) => {
     if (!currentUser) return;
+    console.log('Resolving complaint for user:', currentUser.email, 'complaintId:', complaintId);
     const complaint = submissionsList.find(c => c.id === complaintId);
     const updated = await resolveComplaintRecord(
       complaintId,
@@ -235,9 +236,12 @@ export default function App() {
       currentUser.email,
       resolutionImageUrl
     );
+    console.log('Resolution result:', updated);
     if (updated) {
       setSubmissionsList(await fetchComplaints());
       triggerToast(`Complaint ${complaint?.trackingNumber || 'Record'} marked resolved with proof!`);
+    } else {
+      triggerToast('Failed to resolve complaint. Please check console.');
     }
   };
 
