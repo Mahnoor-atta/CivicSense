@@ -29,16 +29,22 @@ export function calculateDistanceMeters(
 function computeTextSimilarity(text1: string, text2: string): number {
   if (!text1 || !text2) return 0;
 
+  const stopWords = new Set(['broken', 'issue', 'problem', 'fix', 'report', 'complaint', 'place', 'there']);
+
   const clean = (s: string) =>
     s
       .toLowerCase()
       .replace(/[^\w\s]/g, '')
       .split(/\s+/)
-      .filter((w) => w.length > 3);
+      .filter((w) => w.length > 3 && !stopWords.has(w));
 
   const tokens1 = new Set(clean(text1));
   const tokens2 = new Set(clean(text2));
 
+  // If after cleaning, no meaningful tokens exist, treat as potentially similar if they were similar before or just return a low score.
+  // Actually, if both are empty after cleaning, it means they only contain stop words, so they might be considered "similar" in intent, but not in specific content.
+  // Let's return 1.0 if both are empty to indicate they are both effectively "the same" (e.g., both say "Broken").
+  if (tokens1.size === 0 && tokens2.size === 0) return 1.0;
   if (tokens1.size === 0 || tokens2.size === 0) return 0;
 
   let common = 0;
@@ -90,23 +96,29 @@ export function detectDuplicates(
     let matchReason = '';
     let similarityScore = 0;
 
-    // Condition 1: Same category within proximity threshold
-    if (isSameCategory && distance <= maxDistanceThresholdMeters) {
-      isDuplicate = true;
-      similarityScore = Math.min(0.98, 0.7 + (1 - distance / maxDistanceThresholdMeters) * 0.28);
-      matchReason = `Identical category reported ${distance}m away`;
-    }
-    // Condition 2: Very close proximity (< 120m) even with partial category match
-    else if (distance <= 120) {
-      isDuplicate = true;
-      similarityScore = 0.85;
-      matchReason = `Issue reported at virtually the same location (${distance}m away)`;
-    }
-    // Condition 3: High text similarity within 600m
-    else if (textSim > 0.45 && distance <= 600) {
-      isDuplicate = true;
-      similarityScore = 0.8;
-      matchReason = `Similar issue description (${Math.round(textSim * 100)}% match) within neighborhood`;
+    // Requirement: Must be same category
+    if (isSameCategory) {
+      // Must have high description similarity to be a duplicate
+      if (textSim >= 0.6) {
+        // Condition 1: Very close proximity (< 120m)
+        if (distance <= 120) {
+          isDuplicate = true;
+          similarityScore = 0.9;
+          matchReason = `Issue reported at virtually the same location (${distance}m away)`;
+        }
+        // Condition 2: Proximity threshold
+        else if (distance <= maxDistanceThresholdMeters) {
+          isDuplicate = true;
+          similarityScore = Math.min(0.98, 0.7 + (1 - distance / maxDistanceThresholdMeters) * 0.28);
+          matchReason = `Identical category reported ${distance}m away`;
+        }
+        // Condition 3: High text similarity within 600m
+        else if (distance <= 600) {
+          isDuplicate = true;
+          similarityScore = 0.8;
+          matchReason = `Similar issue description (${Math.round(textSim * 100)}% match) within neighborhood`;
+        }
+      }
     }
 
     if (isDuplicate) {

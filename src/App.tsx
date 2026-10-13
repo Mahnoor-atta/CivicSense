@@ -59,7 +59,7 @@ import {
 } from './components/Doodles';
 import {
   handleUpload,
-  getStoredComplaints,
+  fetchComplaints,
   isFirebaseConfigured,
   firebaseConfig,
   rejectComplaintRecord,
@@ -103,9 +103,8 @@ export default function App() {
     province: '',
     city: '',
     streetAddress: '',
-    lat: 31.5204,
-    lng: 74.3587,
-    landmark: '',
+    lat: 0,
+    lng: 0,
   });
   const [priority, setPriority] = useState<PriorityLevel>('Medium');
   const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
@@ -118,9 +117,13 @@ export default function App() {
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Load complaints from storage/seed on mount
+  // Load complaints from Firebase on mount
   useEffect(() => {
-    setSubmissionsList(getStoredComplaints());
+    async function loadComplaints() {
+      const data = await fetchComplaints();
+      setSubmissionsList(data);
+    }
+    loadComplaints();
   }, []);
 
   const triggerToast = (msg: string) => {
@@ -160,23 +163,23 @@ export default function App() {
   };
 
   // Admin Actions
-  const handleAdminReject = (complaintId: string, rejectionNote: string) => {
+  const handleAdminReject = async (complaintId: string, rejectionNote: string) => {
     if (!currentUser) return;
-    const updated = rejectComplaintRecord(complaintId, rejectionNote, currentUser.email);
+    const updated = await rejectComplaintRecord(complaintId, rejectionNote, currentUser.email);
     if (updated) {
-      setSubmissionsList(getStoredComplaints());
+      setSubmissionsList(await fetchComplaints());
       triggerToast(`Complaint ${updated.trackingNumber} rejected with citizen notice.`);
     }
   };
 
-  const handleAdminForward = (
+  const handleAdminForward = async (
     complaintId: string,
     deadline: string,
     facultyAssignee?: string,
     adminNotes?: string
   ) => {
     if (!currentUser) return;
-    const updated = forwardComplaintRecord(
+    const updated = await forwardComplaintRecord(
       complaintId,
       deadline,
       facultyAssignee,
@@ -184,7 +187,7 @@ export default function App() {
       currentUser.email
     );
     if (updated) {
-      setSubmissionsList(getStoredComplaints());
+      setSubmissionsList(await fetchComplaints());
       triggerToast(
         `Complaint ${updated.trackingNumber} forwarded to faculty (Due: ${deadline}).`
       );
@@ -197,7 +200,14 @@ export default function App() {
 
   // Automated Duplicate Detection Engine
   const detectedDuplicates = useMemo(() => {
-    if (!location || !description.trim() || dismissDuplicates) return [];
+    // Only detect if both description and location have been explicitly set
+    if (
+      !location.address ||
+      location.address.trim() === '' ||
+      !description.trim() ||
+      dismissDuplicates
+    )
+      return [];
     return detectDuplicates(
       {
         category,
@@ -210,20 +220,20 @@ export default function App() {
   }, [category, description, location, customCategoryDetail, submissionsList, dismissDuplicates]);
 
   // Faculty Actions with Resolution Photo Evidence
-  const handleFacultyResolve = (
+  const handleFacultyResolve = async (
     complaintId: string,
     resolutionNote?: string,
     resolutionImageUrl?: string
   ) => {
     if (!currentUser) return;
-    const updated = resolveComplaintRecord(
+    const updated = await resolveComplaintRecord(
       complaintId,
       resolutionNote,
       currentUser.email,
       resolutionImageUrl
     );
     if (updated) {
-      setSubmissionsList(getStoredComplaints());
+      setSubmissionsList(await fetchComplaints());
       triggerToast(`Complaint ${updated.trackingNumber} marked resolved with proof!`);
     }
   };
@@ -294,7 +304,7 @@ export default function App() {
       );
 
       setSubmittedData(submission);
-      setSubmissionsList(getStoredComplaints());
+      setSubmissionsList(await fetchComplaints());
       triggerToast(`Complaint ${submission.trackingNumber} successfully logged!`);
     } catch (err: any) {
       console.error('Submission failed:', err);
@@ -314,14 +324,13 @@ export default function App() {
     setPriority('Medium');
     setSubmittedData(null);
     setLocation({
-      address: 'Main Boulevard, Gulberg III, Lahore, Punjab, Pakistan',
+      address: '',
       country: 'Pakistan',
-      province: 'Punjab',
-      city: 'Lahore',
-      streetAddress: 'Main Boulevard, Gulberg III',
-      lat: 31.5204,
-      lng: 74.3587,
-      landmark: 'Liberty Roundabout',
+      province: '',
+      city: '',
+      streetAddress: '',
+      lat: 0,
+      lng: 0,
     });
     setAcknowledgedDuplicate(null);
     setDismissDuplicates(false);
