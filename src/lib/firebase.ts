@@ -127,23 +127,28 @@ export async function handleUpload(
 
     const complaintsCol = collection(firestoreDb, 'complaints');
     try {
-      const docRef = await addDoc(complaintsCol, {
+      const dataToSave: any = {
         ...complaintData,
         trackingNumber: randomTracking,
         imageUrl: downloadUrl || null,
         imageFileName: file?.name || null,
         status: 'Received' as ComplaintStatus,
         createdAt: serverTimestamp(),
+      };
+
+      // Firestore does not allow 'undefined'. Convert all 'undefined' to 'null'.
+      Object.keys(dataToSave).forEach((key) => {
+        if (dataToSave[key] === undefined) {
+          dataToSave[key] = null;
+        }
       });
+
+      const docRef = await addDoc(complaintsCol, dataToSave);
 
       const submission: ComplaintSubmission = {
         id: docRef.id,
         firestoreDocId: docRef.id,
-        trackingNumber: randomTracking,
-        ...complaintData,
-        imageUrl: downloadUrl,
-        imageFileName: file?.name,
-        status: 'Received',
+        ...dataToSave,
         createdAt: Date.now(),
       };
 
