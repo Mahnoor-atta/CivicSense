@@ -175,28 +175,116 @@ function fileToDataUrl(file: File): Promise<string> {
   });
 }
 
+const INITIAL_SAMPLE_COMPLAINTS: ComplaintSubmission[] = [
+  {
+    id: 'mock_1',
+    firestoreDocId: 'mock_1',
+    trackingNumber: 'CIV-1024',
+    category: 'Potholes & Road Damage',
+    description: 'Deep pothole near commercial market causing traffic slowdown and vehicle damage risks.',
+    priority: 'High',
+    status: 'Received',
+    createdAt: Date.now() - 3600000 * 4,
+    citizenName: 'Noor (Citizen)',
+    citizenEmail: 'noor@gmail.com',
+    location: {
+      address: 'Main Boulevard, Gulberg III, Lahore',
+      country: 'Pakistan',
+      province: 'Punjab',
+      city: 'Lahore',
+      streetAddress: 'Gulberg III',
+      lat: 31.5204,
+      lng: 74.3587,
+    },
+  },
+  {
+    id: 'mock_2',
+    firestoreDocId: 'mock_2',
+    trackingNumber: 'CIV-4819',
+    category: 'Streetlight & Electrical Hazards',
+    description: 'Streetlight pole wire exposed near children park pathway.',
+    priority: 'High',
+    status: 'Forwarded',
+    createdAt: Date.now() - 3600000 * 24,
+    citizenName: 'Ali Khan',
+    citizenEmail: 'ali@gmail.com',
+    facultyAssignee: 'Bureau of Street Lighting & Electrical Faculty',
+    forwardDeadline: '2026-10-20',
+    location: {
+      address: 'Block H, Phase 2, Johar Town, Lahore',
+      country: 'Pakistan',
+      province: 'Punjab',
+      city: 'Lahore',
+      streetAddress: 'Johar Town',
+      lat: 31.4697,
+      lng: 74.2728,
+    },
+  },
+  {
+    id: 'mock_3',
+    firestoreDocId: 'mock_3',
+    trackingNumber: 'CIV-7291',
+    category: 'Sanitation & Solid Waste',
+    description: 'Garbage bin overflowing near residential corner.',
+    priority: 'Medium',
+    status: 'Resolved',
+    createdAt: Date.now() - 3600000 * 48,
+    resolvedAt: Date.now() - 3600000 * 12,
+    citizenName: 'Noor (Citizen)',
+    citizenEmail: 'noor@gmail.com',
+    facultyAssignee: 'Sanitation & Solid Waste Management Faculty',
+    resolutionNote: 'Garbage cleared and container disinfected by sanitation squad.',
+    resolvedBy: 'faculty@gmail.com',
+    location: {
+      address: 'F-7/2, Islamabad Capital Territory',
+      country: 'Pakistan',
+      province: 'ICT',
+      city: 'Islamabad',
+      streetAddress: 'F-7/2',
+      lat: 33.7215,
+      lng: 73.0433,
+    },
+  },
+];
+
 export async function fetchComplaints(): Promise<ComplaintSubmission[]> {
   const { db, live } = getFirebaseServices();
-  if (!live || !db) {
-    console.log('Firebase not live, returning empty complaints list.');
-    return [];
+  let firebaseRecords: ComplaintSubmission[] = [];
+
+  if (live && db) {
+    try {
+      const complaintsCol = collection(db, 'complaints');
+      const snapshot = await getDocs(complaintsCol);
+      firebaseRecords = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          firestoreDocId: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate ? data.createdAt.toDate().getTime() : data.createdAt,
+        };
+      }) as ComplaintSubmission[];
+    } catch (err) {
+      console.warn('Failed to fetch from Firestore, relying on local storage:', err);
+    }
   }
 
   try {
-    const complaintsCol = collection(db, 'complaints');
-    const snapshot = await getDocs(complaintsCol);
-    return snapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        firestoreDocId: doc.id,
-        ...data,
-        createdAt: data.createdAt?.toDate ? data.createdAt.toDate().getTime() : data.createdAt,
-      };
-    }) as ComplaintSubmission[];
+    const existing = localStorage.getItem('civic_complaints');
+    let localRecords: ComplaintSubmission[] = existing ? JSON.parse(existing) : [];
+    if (localRecords.length === 0 && firebaseRecords.length === 0) {
+      localRecords = INITIAL_SAMPLE_COMPLAINTS;
+      localStorage.setItem('civic_complaints', JSON.stringify(localRecords));
+    }
+
+    const combinedMap = new Map<string, ComplaintSubmission>();
+    [...localRecords, ...firebaseRecords].forEach((item) => {
+      combinedMap.set(item.id || item.trackingNumber, item);
+    });
+    return Array.from(combinedMap.values()).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
   } catch (err) {
-    console.error('Failed to fetch complaints:', err);
-    return [];
+    console.error('Failed to load local complaints:', err);
+    return firebaseRecords.length > 0 ? firebaseRecords : INITIAL_SAMPLE_COMPLAINTS;
   }
 }
 
@@ -209,23 +297,28 @@ export async function rejectComplaintRecord(
   adminEmail: string
 ): Promise<ComplaintSubmission | null> {
   const { db, live } = getFirebaseServices();
-  if (!live || !db) return null;
 
-  try {
-    const docRef = doc(db, 'complaints', complaintId);
-    await updateDoc(docRef, {
-      status: 'Rejected',
-      rejectedReason: rejectionNote,
-      rejectedBy: adminEmail,
-      updatedAt: serverTimestamp(),
-    });
+  updateLocalRecordById(complaintId, {
+    status: 'Rejected',
+    rejectedReason: rejectionNote,
+    rejectedBy: adminEmail,
+  });
 
-    // Return the updated data (fetching latest or constructing updated object)
-    return { id: complaintId } as ComplaintSubmission;
-  } catch (err) {
-    console.error('Failed to reject complaint:', err);
-    return null;
+  if (live && db) {
+    try {
+      const docRef = doc(db, 'complaints', complaintId);
+      await updateDoc(docRef, {
+        status: 'Rejected',
+        rejectedReason: rejectionNote,
+        rejectedBy: adminEmail,
+        updatedAt: serverTimestamp(),
+      });
+    } catch (err) {
+      console.warn('Firestore update failed, updated locally:', err);
+    }
   }
+
+  return { id: complaintId } as ComplaintSubmission;
 }
 
 /**
@@ -239,25 +332,33 @@ export async function forwardComplaintRecord(
   adminEmail?: string
 ): Promise<ComplaintSubmission | null> {
   const { db, live } = getFirebaseServices();
-  if (!live || !db) return null;
 
-  try {
-    const docRef = doc(db, 'complaints', complaintId);
-    const updateData: any = {
-      status: 'Forwarded',
-      forwardDeadline: deadline,
-      facultyAssignee: facultyAssignee || null,
-      adminNotes: adminNotes || null,
-      forwardedBy: adminEmail || null,
-      updatedAt: serverTimestamp(),
-    };
-    await updateDoc(docRef, updateData);
+  updateLocalRecordById(complaintId, {
+    status: 'Forwarded',
+    forwardDeadline: deadline,
+    facultyAssignee: facultyAssignee || null,
+    adminNotes: adminNotes || null,
+    forwardedBy: adminEmail || null,
+  });
 
-    return { id: complaintId, trackingNumber: '' } as ComplaintSubmission;
-  } catch (err) {
-    console.error('Failed to forward complaint:', err);
-    return null;
+  if (live && db) {
+    try {
+      const docRef = doc(db, 'complaints', complaintId);
+      const updateData: any = {
+        status: 'Forwarded',
+        forwardDeadline: deadline,
+        facultyAssignee: facultyAssignee || null,
+        adminNotes: adminNotes || null,
+        forwardedBy: adminEmail || null,
+        updatedAt: serverTimestamp(),
+      };
+      await updateDoc(docRef, updateData);
+    } catch (err) {
+      console.warn('Firestore update failed, updated locally:', err);
+    }
   }
+
+  return { id: complaintId, trackingNumber: '' } as ComplaintSubmission;
 }
 
 /**
@@ -270,7 +371,6 @@ export async function resolveComplaintRecord(
   file?: File
 ): Promise<ComplaintSubmission | null> {
   const { db, live } = getFirebaseServices();
-  if (!live || !db) return null;
 
   let resolutionImageUrl: string | undefined = undefined;
   if (file) {
@@ -280,23 +380,32 @@ export async function resolveComplaintRecord(
       console.error('Failed to compress resolution image:', err);
     }
   }
-  try {
-    const docRef = doc(db, 'complaints', complaintId);
-    const updateData: any = {
-      status: 'Resolved',
-      resolutionNote: resolutionNote || null,
-      resolvedBy: facultyEmail || null,
-      resolutionImageUrl: resolutionImageUrl || null,
-      updatedAt: serverTimestamp(),
-    };
-    await updateDoc(docRef, updateData);
-    console.log('Complaint resolved successfully in Firestore');
 
-    return { id: complaintId, trackingNumber: '' } as ComplaintSubmission;
-  } catch (err) {
-    console.error('Failed to resolve complaint:', err);
-    return null;
+  updateLocalRecordById(complaintId, {
+    status: 'Resolved',
+    resolutionNote: resolutionNote || null,
+    resolvedBy: facultyEmail || null,
+    resolutionImageUrl: resolutionImageUrl || null,
+    resolvedAt: Date.now(),
+  });
+
+  if (live && db) {
+    try {
+      const docRef = doc(db, 'complaints', complaintId);
+      const updateData: any = {
+        status: 'Resolved',
+        resolutionNote: resolutionNote || null,
+        resolvedBy: facultyEmail || null,
+        resolutionImageUrl: resolutionImageUrl || null,
+        updatedAt: serverTimestamp(),
+      };
+      await updateDoc(docRef, updateData);
+    } catch (err) {
+      console.warn('Firestore update failed, updated locally:', err);
+    }
   }
+
+  return { id: complaintId, trackingNumber: '' } as ComplaintSubmission;
 }
 
 /**
@@ -306,9 +415,25 @@ function saveLocalRecord(submission: ComplaintSubmission) {
   try {
     const existing = localStorage.getItem('civic_complaints');
     const records = existing ? JSON.parse(existing) : [];
-    records.push(submission);
+    records.unshift(submission);
     localStorage.setItem('civic_complaints', JSON.stringify(records));
   } catch (err) {
     console.error('Failed to save complaint locally:', err);
+  }
+}
+
+function updateLocalRecordById(complaintId: string, updates: Partial<ComplaintSubmission>) {
+  try {
+    const existing = localStorage.getItem('civic_complaints');
+    if (!existing) return;
+    let records: ComplaintSubmission[] = JSON.parse(existing);
+    records = records.map((r) =>
+      r.id === complaintId || r.firestoreDocId === complaintId || r.trackingNumber === complaintId
+        ? { ...r, ...updates }
+        : r
+    );
+    localStorage.setItem('civic_complaints', JSON.stringify(records));
+  } catch (err) {
+    console.error('Failed to update local record:', err);
   }
 }

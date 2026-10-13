@@ -95,7 +95,7 @@ export const FacultyReviewPanel: React.FC<FacultyReviewPanelProps> = ({
               {forwardedComplaints.length} Active Forwarded
             </span>
           </h2>
-          <p className="text-xs text-[#9C9BA8]">
+          <p className="text-xs text-[#2D2C35]">
             Complaints forwarded by administrators for engineering, sanitation, and electrical crew resolution.
           </p>
         </div>

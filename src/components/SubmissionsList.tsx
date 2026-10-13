@@ -66,7 +66,7 @@ export const SubmissionsList: React.FC<SubmissionsListProps> = ({
           <h3 className="text-base font-semibold text-[#4A4955]">
             No Civic Reports Submitted Yet
           </h3>
-          <p className="text-xs text-[#9C9BA8] max-w-xs mx-auto">
+          <p className="text-xs text-[#2D2C35] max-w-xs mx-auto">
             Your neighborhood submissions and live repair statuses will appear here once you file a complaint.
           </p>
         </div>
@@ -184,7 +184,7 @@ export const SubmissionsList: React.FC<SubmissionsListProps> = ({
                       <span>Resolution Proof & Visual Verification</span>
                     </span>
                     {sub.resolvedAt && (
-                      <span className="text-[10px] text-[#9C9BA8] font-normal">
+                      <span className="text-[10px] text-[#2D2C35] font-normal">
                         Verified {new Date(sub.resolvedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </span>
                     )}
@@ -258,13 +258,13 @@ export const SubmissionsList: React.FC<SubmissionsListProps> = ({
                 </div>
               )}
 
-              <div className="flex items-center justify-between text-[11px] text-[#9C9BA8] pt-1 border-t border-[#8DA399]/15">
+              <div className="flex items-center justify-between text-[11px] text-[#2D2C35] pt-1 border-t border-[#8DA399]/15">
                 <div className="flex items-center gap-1 truncate max-w-[65%]">
                   <MapPin className="w-3.5 h-3.5 text-[#8DA399] shrink-0" />
                   <span className="truncate">{sub.location.address}</span>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  <Clock className="w-3 h-3 text-[#9C9BA8]" />
+                  <Clock className="w-3 h-3 text-[#2D2C35]" />
                   <span>{formattedDate}</span>
                 </div>
               </div>

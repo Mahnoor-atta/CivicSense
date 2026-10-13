@@ -111,7 +111,7 @@ export const SummaryStatCards: React.FC<SummaryStatCardsProps> = ({
             </div>
 
             {/* Bottom Subtitle */}
-            <p className="text-[11px] text-[#9C9BA8] line-clamp-1 leading-snug">
+            <p className="text-[11px] text-[#2D2C35] line-clamp-1 leading-snug">
               {stat.subtitle}
             </p>
           </div>

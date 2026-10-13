@@ -82,7 +82,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 {currentUser.role}
               </span>
             </div>
-            <p className="text-xs text-[#9C9BA8] font-mono flex items-center justify-center sm:justify-start gap-1">
+            <p className="text-xs text-[#2D2C35] font-mono flex items-center justify-center sm:justify-start gap-1">
               <Mail className="w-3.5 h-3.5 text-[#8DA399]" />
               <span>{currentUser.email}</span>
             </p>

@@ -452,7 +452,7 @@ export default function App() {
                   {currentUser.role}
                 </span>
               </div>
-              <p className="text-[11px] text-[#9C9BA8] hidden sm:block">
+              <p className="text-[11px] text-[#2D2C35] hidden sm:block">
                 Active: {currentUser.name}
               </p>
             </div>
@@ -505,7 +505,7 @@ export default function App() {
                   <h3 className="text-xs font-bold text-[#4A4955] uppercase tracking-wider">
                     Overview Analytics
                   </h3>
-                  <span className="text-[11px] text-[#9C9BA8]">Real-time municipal registry</span>
+                  <span className="text-[11px] text-[#2D2C35]">Real-time municipal registry</span>
                 </div>
 
                 <SummaryStatCards
@@ -601,7 +601,7 @@ export default function App() {
                             {item.category}{' '}
                             {item.customCategoryDetail && `(${item.customCategoryDetail})`}
                           </p>
-                          <p className="text-[11px] text-[#9C9BA8] truncate">
+                          <p className="text-[11px] text-[#2D2C35] truncate">
                             📍 {item.location.address} • Filed by {item.citizenName || 'Resident'}
                           </p>
                         </div>

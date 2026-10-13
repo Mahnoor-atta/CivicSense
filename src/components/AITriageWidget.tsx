@@ -67,7 +67,7 @@ export const AITriageWidget: React.FC<AITriageWidgetProps> = ({
             <h4 className="text-xs font-semibold text-[#4A4955] flex items-center gap-1.5">
               <span>Smart Complaint Assistant</span>
             </h4>
-            <p className="text-[11px] text-[#9C9BA8]">
+            <p className="text-[11px] text-[#555461]">
               Helps automatically categorize issues and prioritize based on safety.
             </p>
           </div>
@@ -83,7 +83,7 @@ export const AITriageWidget: React.FC<AITriageWidgetProps> = ({
                 ? 'bg-[#EBF0ED] text-[#8DA399] cursor-wait'
                 : hasInput
                 ? 'bg-[#8DA399] text-white hover:bg-[#7D9489] hover:scale-[1.02] cursor-pointer'
-                : 'bg-[#F4EFEB] text-[#9C9BA8] cursor-not-allowed'
+                : 'bg-[#F4EFEB] text-[#555461] cursor-not-allowed'
             }
           `}
         >

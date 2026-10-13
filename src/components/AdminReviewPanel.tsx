@@ -196,7 +196,7 @@ export const AdminReviewPanel: React.FC<AdminReviewPanelProps> = ({
                 : `${filteredComplaints.length} Records`}
             </span>
           </h2>
-          <p className="text-xs text-[#9C9BA8]">
+          <p className="text-xs text-[#2D2C35]">
             {statusFilter === 'pending'
               ? 'Showing complaints awaiting review. Once you forward or reject an issue, it is automatically removed from this queue.'
               : 'Review municipal citizen reports and dispatch to faculty.'}
@@ -211,7 +211,7 @@ export const AdminReviewPanel: React.FC<AdminReviewPanelProps> = ({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search tracking, citizen, address..."
-            className="w-full pl-9 pr-3 py-2 bg-white/90 border border-[#8DA399]/30 rounded-xl text-xs text-[#4A4955] placeholder:text-[#9C9BA8] focus:outline-none focus:ring-2 focus:ring-[#8DA399]/40"
+            className="w-full pl-9 pr-3 py-2 bg-white/90 border border-[#8DA399]/30 rounded-xl text-xs text-[#4A4955] placeholder:text-[#2D2C35] focus:outline-none focus:ring-2 focus:ring-[#8DA399]/40"
           />
         </div>
       </div>

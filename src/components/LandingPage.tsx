@@ -110,19 +110,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           <div className="pt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto text-left">
             <div className="p-3.5 rounded-2xl bg-white/80 border border-[#8DA399]/20 shadow-2xs">
               <p className="text-lg font-bold text-[#4A4955]">100%</p>
-              <p className="text-xs text-[#9C9BA8]">Citizen Direct Voice</p>
+              <p className="text-xs text-[#2D2C35]">Citizen Direct Voice</p>
             </div>
             <div className="p-3.5 rounded-2xl bg-white/80 border border-[#8DA399]/20 shadow-2xs">
               <p className="text-lg font-bold text-[#4A725D]">&lt; 24h</p>
-              <p className="text-xs text-[#9C9BA8]">Average Admin Triage</p>
+              <p className="text-xs text-[#2D2C35]">Average Admin Triage</p>
             </div>
             <div className="p-3.5 rounded-2xl bg-white/80 border border-[#8DA399]/20 shadow-2xs">
               <p className="text-lg font-bold text-[#8DA399]">Smart AI</p>
-              <p className="text-xs text-[#9C9BA8]">Gemini Issue Triaging</p>
+              <p className="text-xs text-[#2D2C35]">Gemini Issue Triaging</p>
             </div>
             <div className="p-3.5 rounded-2xl bg-white/80 border border-[#8DA399]/20 shadow-2xs">
               <p className="text-lg font-bold text-[#4A4955]">Live</p>
-              <p className="text-xs text-[#9C9BA8]">Tracking & Resolution</p>
+              <p className="text-xs text-[#2D2C35]">Tracking & Resolution</p>
             </div>
           </div>
         </section>
@@ -133,7 +133,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             <h2 className="text-2xl font-bold text-[#4A4955]">
               Designed for Seamless Civic Collaboration
             </h2>
-            <p className="text-xs sm:text-sm text-[#9C9BA8] max-w-lg mx-auto">
+            <p className="text-xs sm:text-sm text-[#2D2C35] max-w-lg mx-auto">
               Every detail is engineered with plenty of whitespace, calming pastel tones, and accessible workflows.
             </p>
           </div>
