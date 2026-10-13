@@ -165,10 +165,11 @@ export default function App() {
   // Admin Actions
   const handleAdminReject = async (complaintId: string, rejectionNote: string) => {
     if (!currentUser) return;
+    const complaint = submissionsList.find(c => c.id === complaintId);
     const updated = await rejectComplaintRecord(complaintId, rejectionNote, currentUser.email);
     if (updated) {
       setSubmissionsList(await fetchComplaints());
-      triggerToast(`Complaint ${updated.trackingNumber} rejected with citizen notice.`);
+      triggerToast(`Complaint ${complaint?.trackingNumber || 'Record'} rejected with citizen notice.`);
     }
   };
 
@@ -179,6 +180,7 @@ export default function App() {
     adminNotes?: string
   ) => {
     if (!currentUser) return;
+    const complaint = submissionsList.find(c => c.id === complaintId);
     const updated = await forwardComplaintRecord(
       complaintId,
       deadline,
@@ -189,7 +191,7 @@ export default function App() {
     if (updated) {
       setSubmissionsList(await fetchComplaints());
       triggerToast(
-        `Complaint ${updated.trackingNumber} forwarded to faculty (Due: ${deadline}).`
+        `Complaint ${complaint?.trackingNumber || 'Record'} forwarded to faculty (Due: ${deadline}).`
       );
     }
   };
@@ -226,6 +228,7 @@ export default function App() {
     resolutionImageUrl?: string
   ) => {
     if (!currentUser) return;
+    const complaint = submissionsList.find(c => c.id === complaintId);
     const updated = await resolveComplaintRecord(
       complaintId,
       resolutionNote,
@@ -234,7 +237,7 @@ export default function App() {
     );
     if (updated) {
       setSubmissionsList(await fetchComplaints());
-      triggerToast(`Complaint ${updated.trackingNumber} marked resolved with proof!`);
+      triggerToast(`Complaint ${complaint?.trackingNumber || 'Record'} marked resolved with proof!`);
     }
   };
 

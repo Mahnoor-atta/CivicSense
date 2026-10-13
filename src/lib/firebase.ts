@@ -6,6 +6,8 @@ import {
   serverTimestamp,
   Firestore,
   getDocs,
+  doc,
+  updateDoc,
 } from 'firebase/firestore';
 import { ComplaintSubmission, LocationData, PriorityLevel, ComplaintStatus } from '../types/civic';
 
@@ -201,13 +203,22 @@ export async function rejectComplaintRecord(
 ): Promise<ComplaintSubmission | null> {
   const { db, live } = getFirebaseServices();
   if (!live || !db) return null;
-  
-  // Note: To make this fully functional, we'd need to update the Firestore document.
-  // Given the current scope, we will implement the Firestore update here.
-  
-  // Implementation would go here: updateDoc(doc(db, 'complaints', complaintId), { ... })
-  
-  return null; // Placeholder for now, as real Firestore update implementation is pending.
+
+  try {
+    const docRef = doc(db, 'complaints', complaintId);
+    await updateDoc(docRef, {
+      status: 'Rejected',
+      rejectedReason: rejectionNote,
+      rejectedBy: adminEmail,
+      updatedAt: serverTimestamp(),
+    });
+
+    // Return the updated data (fetching latest or constructing updated object)
+    return { id: complaintId } as ComplaintSubmission;
+  } catch (err) {
+    console.error('Failed to reject complaint:', err);
+    return null;
+  }
 }
 
 /**
@@ -220,7 +231,25 @@ export async function forwardComplaintRecord(
   adminNotes?: string,
   adminEmail?: string
 ): Promise<ComplaintSubmission | null> {
-  return null; // Placeholder for now.
+  const { db, live } = getFirebaseServices();
+  if (!live || !db) return null;
+
+  try {
+    const docRef = doc(db, 'complaints', complaintId);
+    await updateDoc(docRef, {
+      status: 'Forwarded',
+      forwardDeadline: deadline,
+      facultyAssignee: facultyAssignee,
+      adminNotes: adminNotes,
+      forwardedBy: adminEmail,
+      updatedAt: serverTimestamp(),
+    });
+
+    return { id: complaintId, trackingNumber: '' } as ComplaintSubmission;
+  } catch (err) {
+    console.error('Failed to forward complaint:', err);
+    return null;
+  }
 }
 
 /**
@@ -232,7 +261,24 @@ export async function resolveComplaintRecord(
   facultyEmail?: string,
   resolutionImageUrl?: string
 ): Promise<ComplaintSubmission | null> {
-  return null; // Placeholder for now.
+  const { db, live } = getFirebaseServices();
+  if (!live || !db) return null;
+
+  try {
+    const docRef = doc(db, 'complaints', complaintId);
+    await updateDoc(docRef, {
+      status: 'Resolved',
+      resolutionNote: resolutionNote,
+      resolvedBy: facultyEmail,
+      resolutionImageUrl: resolutionImageUrl,
+      updatedAt: serverTimestamp(),
+    });
+
+    return { id: complaintId, trackingNumber: '' } as ComplaintSubmission;
+  } catch (err) {
+    console.error('Failed to resolve complaint:', err);
+    return null;
+  }
 }
 
 /**
