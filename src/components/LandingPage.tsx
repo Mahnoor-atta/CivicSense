@@ -70,12 +70,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
           </div>
 
           {/* Main Headline */}
-          <div className="space-y-2 max-w-3xl mx-auto">
+          <div className="space-y-3 max-w-4xl mx-auto">
             <h1 className="text-3xl sm:text-5xl font-extrabold text-[#4A4955] tracking-tight leading-tight">
-              Smart Civic Complaint & Resolution Platform with <span className="text-[#8DA399]">CivicSense</span>
+              Smart Civic Complaint & <br className="hidden sm:block" />
+              Resolution Platform with <span className="text-[#8DA399]">CivicSense</span>
             </h1>
-            <div className="flex justify-center -mt-1">
-              <DoodleSquiggleUnderline className="w-32 text-[#8DA399]" />
+            <div className="flex justify-center pt-1">
+              <DoodleSquiggleUnderline className="w-36 text-[#8DA399]" />
             </div>
           </div>
 
