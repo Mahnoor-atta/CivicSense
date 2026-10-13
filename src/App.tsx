@@ -68,10 +68,9 @@ import {
 } from './lib/firebase';
 
 const SAMPLE_ISSUES = [
-  'Deep pothole near pedestrian crosswalk with exposed gravel',
-  'Streetlight buzzing and completely unlit at night',
-  'Storm drain backed up after rainfall causing large puddle',
-  'Illegal furniture and bags dumped on corner sidewalk',
+  'Broken Streetlight',
+  'Clogged Drain',
+  'Pothole on Main Road',
 ];
 
 export default function App() {
@@ -99,15 +98,14 @@ export default function App() {
   const [customCategoryDetail, setCustomCategoryDetail] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [location, setLocation] = useState<LocationData>({
-    address: 'Main Boulevard, Gulberg III, Lahore, Punjab, Pakistan',
+    address: '',
     country: 'Pakistan',
-    province: 'Punjab',
-    city: 'Lahore',
-    streetAddress: 'Main Boulevard, Gulberg III',
+    province: '',
+    city: '',
+    streetAddress: '',
     lat: 31.5204,
     lng: 74.3587,
-    neighborhood: 'Gulberg Municipal Zone',
-    landmark: 'Liberty Roundabout',
+    landmark: '',
   });
   const [priority, setPriority] = useState<PriorityLevel>('Medium');
   const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
@@ -140,14 +138,14 @@ export default function App() {
     // Admin -> table-based complaint review panel ('complaints')
     // Faculty -> panel showing only forwarded complaints ('complaints')
     if (user.role === 'citizen') {
-      setCurrentTab('new_complaint');
-      triggerToast(`Welcome ${user.name}! Citizen Complaint Form ready.`);
+      setCurrentTab('dashboard');
+      triggerToast(`Welcome ${user.name}!`);
     } else if (user.role === 'admin') {
-      setCurrentTab('complaints');
-      triggerToast(`Welcome Admin. Redirected to Complaint Review Table.`);
+      setCurrentTab('dashboard');
+      triggerToast(`Welcome Admin.`);
     } else if (user.role === 'faculty') {
-      setCurrentTab('complaints');
-      triggerToast(`Welcome Faculty. Redirected to Forwarded Tasks Panel.`);
+      setCurrentTab('dashboard');
+      triggerToast(`Welcome Faculty.`);
     }
   };
 
@@ -277,10 +275,12 @@ export default function App() {
         imageFile,
         {
           category,
-          customCategoryDetail: category === 'Other' ? customCategoryDetail.trim() : undefined,
+          customCategoryDetail: category === 'Other' ? (customCategoryDetail?.trim() || '') : '',
           description: description.trim(),
           priority,
-          location,
+          location: {
+            ...location,
+          },
           citizenName: isAnonymous ? 'Anonymous Citizen' : currentUser?.name || 'Citizen',
           citizenContact: currentUser?.email,
           citizenEmail: isAnonymous ? undefined : currentUser?.email,
@@ -321,7 +321,6 @@ export default function App() {
       streetAddress: 'Main Boulevard, Gulberg III',
       lat: 31.5204,
       lng: 74.3587,
-      neighborhood: 'Gulberg Municipal Zone',
       landmark: 'Liberty Roundabout',
     });
     setAcknowledgedDuplicate(null);
@@ -478,7 +477,7 @@ export default function App() {
         </header>
 
         {/* Main Body */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-5xl w-full mx-auto space-y-6">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full space-y-6">
           {/* TAB 1: DASHBOARD VIEW */}
           {currentTab === 'dashboard' && (
             <div className="space-y-6 animate-in fade-in">
@@ -514,7 +513,7 @@ export default function App() {
                   </h2>
                   <p className="text-xs text-[#6B6A75] leading-relaxed">
                     {currentUser.role === 'citizen' &&
-                      'Report neighborhood issues, upload evidence photos, pin exact map coordinates, and track repair dispatches.'}
+                      'Report issues, upload evidence photos, pin exact map coordinates, and track repair dispatches.'}
                     {currentUser.role === 'admin' &&
                       'Review incoming citizen complaints in your review table, reject with mandatory notice, or forward to faculty with completion deadlines.'}
                     {currentUser.role === 'faculty' &&
@@ -673,7 +672,7 @@ export default function App() {
 
           {/* TAB 3: NEW COMPLAINT FORM (Only accessible to Citizen) */}
           {currentTab === 'new_complaint' && currentUser.role === 'citizen' && (
-            <div className="max-w-2xl mx-auto space-y-4 animate-in fade-in">
+            <div className="w-full space-y-4 animate-in fade-in">
               {/* Submission Success State */}
               {submittedData ? (
                 <div className="rounded-[1.2rem] border border-[#8DA399]/30 bg-white/90 p-6 text-center space-y-4 shadow-xs animate-in zoom-in-95 duration-200">
@@ -686,7 +685,7 @@ export default function App() {
                       {submittedData.trackingNumber}
                     </span>
                     <h3 className="text-xl font-bold text-[#4A4955] pt-1">
-                      Complaint Successfully Logged!
+                      Complaint Logged Successfully!
                     </h3>
                     <p className="text-xs text-[#6B6A75] max-w-sm mx-auto leading-relaxed">
                       Your report has been queued for administrative review. You can monitor its dispatch progress in your portal.
@@ -733,10 +732,10 @@ export default function App() {
                 >
                   <div className="border-b border-[#8DA399]/20 pb-3">
                     <h2 className="text-lg font-bold text-[#4A4955]">
-                      Civic Complaint Submission Form
+                      Smart Complaint Assistant
                     </h2>
                     <p className="text-xs text-[#9C9BA8]">
-                      Report neighborhood hazards, road damage, outages, or sanitation issues directly to city dispatch.
+                      Report hazards, road damage, outages, or sanitation issues directly to city dispatch.
                     </p>
                   </div>
 
@@ -812,14 +811,9 @@ export default function App() {
 
                   {/* 3. PRIORITY LEVEL */}
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <label className="text-sm font-semibold text-[#4A4955] flex items-center gap-1.5">
-                        <span>Safety Urgency / Priority</span>
-                      </label>
-                      <span className="text-xs text-[#9C9BA8]">
-                        Triaged automatically or adjusted manually
-                      </span>
-                    </div>
+                    <label className="text-sm font-semibold text-[#4A4955] flex items-center gap-1.5">
+                      <span>Safety Urgency / Priority</span>
+                    </label>
 
                     <div className="grid grid-cols-3 gap-2.5">
                       {(['Low', 'Medium', 'High'] as PriorityLevel[]).map((p) => {
@@ -908,7 +902,7 @@ export default function App() {
                   {isSubmitting && (
                     <div className="space-y-1 animate-in fade-in">
                       <div className="flex justify-between text-xs text-[#6E867B] font-medium">
-                        <span>Uploading evidence photo & syncing Firestore...</span>
+                        <span>Submitting your report...</span>
                         <span>{uploadProgress}%</span>
                       </div>
                       <div className="w-full h-2 bg-[#EBF0ED] rounded-full overflow-hidden">
@@ -938,7 +932,7 @@ export default function App() {
                       {isSubmitting ? (
                         <>
                           <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                          <span>Dispatching to Municipal Queue...</span>
+                          <span>Submitting...</span>
                         </>
                       ) : (
                         <>

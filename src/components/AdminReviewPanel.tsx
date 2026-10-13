@@ -84,7 +84,7 @@ export const AdminReviewPanel: React.FC<AdminReviewPanelProps> = ({
   const forwardedCount = complaints.filter((c) => c.status === 'Forwarded').length;
   const rejectedCount = complaints.filter((c) => c.status === 'Rejected').length;
   const resolvedCount = complaints.filter((c) => c.status === 'Resolved').length;
-  const allCount = complaints.length;
+  const activeCount = complaints.filter((c) => c.status !== 'Resolved').length;
 
   // Filter complaints
   const filteredComplaints = complaints.filter((c) => {
@@ -98,9 +98,7 @@ export const AdminReviewPanel: React.FC<AdminReviewPanelProps> = ({
       (c.citizenName && c.citizenName.toLowerCase().includes(search.toLowerCase()));
 
     const matchesStatus =
-      statusFilter === 'all'
-        ? true
-        : statusFilter === 'pending'
+        statusFilter === 'pending'
         ? c.status === 'Received' || c.status === 'Under Review'
         : c.status.toLowerCase() === statusFilter.toLowerCase();
 
@@ -201,7 +199,7 @@ export const AdminReviewPanel: React.FC<AdminReviewPanelProps> = ({
           <p className="text-xs text-[#9C9BA8]">
             {statusFilter === 'pending'
               ? 'Showing complaints awaiting review. Once you forward or reject an issue, it is automatically removed from this queue.'
-              : 'Review municipal citizen reports, dispatch to faculty, or inspect resolution history.'}
+              : 'Review municipal citizen reports and dispatch to faculty.'}
           </p>
         </div>
 
@@ -231,8 +229,6 @@ export const AdminReviewPanel: React.FC<AdminReviewPanelProps> = ({
             },
             { id: 'forwarded', label: 'Forwarded to Faculty', count: forwardedCount },
             { id: 'rejected', label: 'Rejected', count: rejectedCount },
-            { id: 'resolved', label: 'Resolved Proofs', count: resolvedCount },
-            { id: 'all', label: 'All History', count: allCount },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -400,17 +396,31 @@ export const AdminReviewPanel: React.FC<AdminReviewPanelProps> = ({
 
                       {/* Action */}
                       <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openReviewModal(c);
-                          }}
-                          className="px-3 py-1.5 bg-[#8DA399] hover:bg-[#7D9489] text-white rounded-xl text-xs font-semibold shadow-2xs hover:scale-105 transition-all inline-flex items-center gap-1"
-                        >
-                          <span>Review</span>
-                          <ChevronRight className="w-3 h-3" />
-                        </button>
+                        {(c.status === 'Received' || c.status === 'Under Review') ? (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openReviewModal(c);
+                            }}
+                            className="px-3 py-1.5 bg-[#8DA399] hover:bg-[#7D9489] text-white rounded-xl text-xs font-semibold shadow-2xs hover:scale-105 transition-all inline-flex items-center gap-1"
+                          >
+                            <span>Review</span>
+                            <ChevronRight className="w-3 h-3" />
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openReviewModal(c);
+                            }}
+                            className="px-3 py-1.5 bg-[#EBF0ED] hover:bg-[#D1DBD6] text-[#6B6A75] rounded-xl text-xs font-semibold shadow-2xs transition-all inline-flex items-center gap-1"
+                          >
+                            <span>View</span>
+                            <Eye className="w-3 h-3" />
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );
@@ -545,7 +555,7 @@ export const AdminReviewPanel: React.FC<AdminReviewPanelProps> = ({
             {/* ----------------------------------------------------------------- */}
             {/* VIEW STATE 1: SELECTION BUTTONS (ONLY SHOWN WHEN reviewMode === 'view') */}
             {/* ----------------------------------------------------------------- */}
-            {reviewMode === 'view' && (
+            {reviewMode === 'view' && (selectedComplaint.status === 'Received' || selectedComplaint.status === 'Under Review') && (
               <div className="space-y-2 pt-1 animate-in fade-in">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-[#4A4955]">
@@ -748,26 +758,7 @@ export const AdminReviewPanel: React.FC<AdminReviewPanelProps> = ({
                     <span className="text-xs text-rose-600 font-bold">* Mandatory</span>
                   </label>
 
-                  <div className="flex flex-wrap items-center gap-1.5 pb-1">
-                    <span className="text-[10px] text-rose-700 font-semibold">Quick reasons:</span>
-                    {[
-                      'Duplicate of active report already in queue',
-                      'Private property outside city municipal boundary',
-                      'Insufficient photo or location clarity',
-                    ].map((reason, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => {
-                          setRejectionNote(reason);
-                          setRejectionError(null);
-                        }}
-                        className="text-[10px] bg-white text-rose-800 border border-rose-200 hover:bg-rose-100 px-2.5 py-0.5 rounded-full transition-colors"
-                      >
-                        {reason}
-                      </button>
-                    ))}
-                  </div>
+
 
                   <textarea
                     rows={3}

@@ -65,13 +65,10 @@ export const AITriageWidget: React.FC<AITriageWidgetProps> = ({
           </div>
           <div>
             <h4 className="text-xs font-semibold text-[#4A4955] flex items-center gap-1.5">
-              <span>Gemini AI Civic Triaging</span>
-              <span className="text-[10px] font-medium bg-[#8DA399]/15 text-[#6E867B] px-1.5 py-0.2 rounded-full">
-                Smart Dispatch
-              </span>
+              <span>Smart Complaint Assistant</span>
             </h4>
             <p className="text-[11px] text-[#9C9BA8]">
-              Automates category assignment & safety priority from your description
+              Helps automatically categorize issues and prioritize based on safety.
             </p>
           </div>
         </div>
@@ -110,7 +107,7 @@ export const AITriageWidget: React.FC<AITriageWidgetProps> = ({
           <div className="flex items-center justify-between">
             <span className="font-semibold text-[#4A4955] flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-[#8DA399]" />
-              <span>AI Assessment:</span>
+              <span>Assessment:</span>
               <span className="text-[#3E4A44] underline decoration-[#8DA399]/50 underline-offset-2">
                 {result.category}
               </span>

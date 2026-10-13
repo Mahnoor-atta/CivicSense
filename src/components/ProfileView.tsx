@@ -12,6 +12,7 @@ import {
   FileText,
   Clock,
   ArrowRight,
+  PlusCircle,
 } from 'lucide-react';
 import {
   DoodleHouse,
@@ -201,6 +202,30 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           })}
         </div>
       </div>
+      {/* Create New Account Card */}
+      {(currentUser.role === 'admin' || currentUser.role === 'faculty') && (
+        <div className="rounded-[1.2rem] border border-[#8DA399]/25 bg-white/80 p-5 space-y-3 shadow-2xs">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold text-[#4A4955] flex items-center gap-1.5">
+              <PlusCircle className="w-3.5 h-3.5 text-[#8DA399]" />
+              <span>Create New Account</span>
+            </h3>
+            <span className="text-[10px] text-[#9C9BA8]">Authorized Staff Access</span>
+          </div>
+
+          <p className="text-[11px] text-[#6B6A75]">
+            As {currentUser.role === 'admin' ? 'an admin' : 'a faculty member'}, you can create new staff accounts.
+          </p>
+
+          <button
+            type="button"
+            className="w-full py-2.5 rounded-xl bg-[#8DA399] hover:bg-[#7D9489] text-white text-xs font-semibold shadow-xs transition-all flex items-center justify-center gap-2"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Open Account Creation Form</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

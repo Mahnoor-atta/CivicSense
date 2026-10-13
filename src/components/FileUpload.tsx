@@ -89,7 +89,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         <label className="text-sm font-semibold text-[#4A4955] flex items-center gap-2">
           <span>Evidence Photo</span>
           <span className="text-xs font-normal text-[#8DA399] bg-[#EBF0ED] px-2 py-0.5 rounded-full">
-            Recommended
+            Optional
           </span>
         </label>
         <span className="text-xs text-[#9C9BA8]">PNG, JPG up to 10MB</span>

@@ -201,12 +201,12 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
 }) => {
   // 1. Selected Province state
   const [selectedProvince, setSelectedProvince] = useState<string>(
-    location.province || 'Punjab'
+    location.province || ''
   );
 
   // 2. Selected City state
   const [selectedCity, setSelectedCity] = useState<string>(
-    location.city || 'Lahore'
+    location.city || ''
   );
 
   // Custom city input toggle for non-listed towns
@@ -215,12 +215,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
 
   // 3. Street / Specific address typed further
   const [streetAddress, setStreetAddress] = useState<string>(
-    location.streetAddress ||
-      location.address
-        .split(',')[0]
-        ?.replace(/(Pakistan|Punjab|Sindh|KPK|Balochistan|ICT|Lahore|Karachi|Islamabad)/gi, '')
-        .trim() ||
-      'Main Boulevard, Block B'
+    location.streetAddress || ''
   );
 
   const [isLocating, setIsLocating] = useState(false);
@@ -265,7 +260,6 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
       streetAddress: cleanStreet,
       lat,
       lng,
-      neighborhood: `${city} Municipal Zone`,
       landmark: cleanStreet,
     });
   };
@@ -354,11 +348,8 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
           <label className="text-sm font-bold text-[#4A4955] flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#8DA399]"></span>
             <span>Incident Location in Pakistan</span>
-            <span className="text-xs text-rose-500 font-bold">*</span>
+            <span className="text-rose-500 font-bold">*</span>
           </label>
-          <p className="text-[11px] text-[#6B6A75]">
-            Country is locked to Pakistan. Select Province and City from dropdowns, then type the specific address.
-          </p>
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
@@ -418,7 +409,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
       )}
 
       {/* STEP 1, 2, 3: COUNTRY (FIXED) -> PROVINCE (DROPDOWN) -> CITY (DROPDOWN) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="flex flex-col gap-4">
         {/* OPTION 1: COUNTRY (Fixed to Pakistan as requested) */}
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-[#4A4955] flex items-center gap-1.5">
@@ -466,6 +457,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
               disabled={disabled}
               className="w-full appearance-none px-3.5 py-2.5 pr-8 bg-white border border-[#8DA399]/35 rounded-xl text-xs text-[#4A4955] font-semibold focus:outline-none focus:ring-2 focus:ring-[#8DA399]/40 focus:border-[#8DA399] transition-all cursor-pointer shadow-2xs hover:border-[#8DA399]"
             >
+              <option value="" disabled>Select Province</option>
               {PROVINCE_NAMES.map((prov) => (
                 <option key={prov} value={prov} className="py-1">
                   {prov}
@@ -500,6 +492,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
               disabled={disabled}
               className="w-full appearance-none px-3.5 py-2.5 pr-8 bg-white border border-[#8DA399]/35 rounded-xl text-xs text-[#4A4955] font-semibold focus:outline-none focus:ring-2 focus:ring-[#8DA399]/40 focus:border-[#8DA399] transition-all cursor-pointer shadow-2xs hover:border-[#8DA399]"
             >
+              <option value="" disabled>Select City</option>
               {currentCities.map((c) => (
                 <option key={c.name} value={c.name} className="py-1">
                   {c.name}
@@ -580,35 +573,15 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
         </p>
       </div>
 
-      {/* FULL SYNTHESIZED VERIFIED ADDRESS SUMMARY CARD (Clean, Minimalist - No Map) */}
-      <div className="p-3.5 rounded-xl bg-white border border-[#8DA399]/30 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-        <div className="flex items-start gap-2.5 min-w-0">
-          <div className="w-7 h-7 rounded-full bg-[#EBF0ED] text-[#8DA399] flex items-center justify-center shrink-0 mt-0.5">
-            <Check className="w-4 h-4" />
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#8DA399]">
-                Complete Formatted Address:
-              </span>
-              <span className="text-[9px] font-bold bg-[#EBF0ED] text-[#6E867B] px-1.5 py-0.5 rounded">
-                🇵🇰 Pakistan
-              </span>
-            </div>
-            <p className="text-xs font-bold text-[#4A4955] truncate mt-0.5">
-              {streetAddress ? `${streetAddress}, ` : ''}{selectedCity}, {selectedProvince}, Pakistan
-            </p>
-            <p className="text-[10px] text-[#9C9BA8] truncate">
-              Municipality: {selectedCity} Municipal Zone • Region: {selectedProvince}
-            </p>
-          </div>
+      {/* FULL SYNTHESIZED VERIFIED ADDRESS SUMMARY CARD (Clean, Minimalist) */}
+      <div className="p-3.5 rounded-xl bg-white border border-[#8DA399]/30 shadow-2xs flex items-center gap-3">
+        <div className="w-7 h-7 rounded-full bg-[#EBF0ED] text-[#8DA399] flex items-center justify-center shrink-0">
+          <MapPin className="w-4 h-4" />
         </div>
-
-        <div className="self-end sm:self-center shrink-0">
-          <span className="text-[10px] text-[#6E867B] bg-[#EBF0ED] px-2.5 py-1 rounded-lg border border-[#8DA399]/25 font-bold flex items-center gap-1">
-            <MapPin className="w-3 h-3 text-[#8DA399]" />
-            <span>Jurisdiction Verified</span>
-          </span>
+        <div className="min-w-0">
+          <p className="text-xs font-bold text-[#4A4955] truncate">
+            {streetAddress ? `${streetAddress}, ` : ''}{selectedCity}, {selectedProvince}, Pakistan
+          </p>
         </div>
       </div>
     </div>

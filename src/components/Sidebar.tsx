@@ -223,7 +223,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           className="w-full flex items-center gap-2 px-3.5 py-2.5 rounded-[1rem] text-xs font-semibold text-[#6B6A75] hover:text-rose-700 hover:bg-rose-50 transition-colors"
         >
           <LogOut className="w-4 h-4 text-rose-500" />
-          <span>Switch Account / Sign Out</span>
+          <span>Log Out</span>
         </button>
       </div>
     </div>

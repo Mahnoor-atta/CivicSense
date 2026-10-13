@@ -16,22 +16,22 @@ interface AuthScreenProps {
 export const TEST_USERS: { email: string; pass: string; name: string; role: UserRole; dept?: string }[] = [
   {
     email: 'noor@gmail.com',
-    pass: 'noor123',
-    name: 'Noor',
+    pass: 'civic123',
+    name: 'Noor (Citizen)',
     role: 'citizen',
     dept: 'Verified Resident',
   },
   {
     email: 'admin@gmail.com',
-    pass: 'admin123',
-    name: 'Admin',
+    pass: 'civic123',
+    name: 'Admin (Staff)',
     role: 'admin',
-    dept: 'Central Municipal Administration',
+    dept: 'City Administrator',
   },
   {
     email: 'faculty@gmail.com',
-    pass: 'faculty123',
-    name: 'Faculty',
+    pass: 'civic123',
+    name: 'Faculty (Staff)',
     role: 'faculty',
     dept: 'Municipal Engineering & Public Works',
   },
@@ -49,13 +49,13 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onBackToHome })
     setError(null);
     if (role === 'citizen') {
       setEmail('noor@gmail.com');
-      setPassword('noor123');
+      setPassword('civic123');
     } else if (role === 'admin') {
       setEmail('admin@gmail.com');
-      setPassword('admin123');
+      setPassword('civic123');
     } else if (role === 'faculty') {
       setEmail('faculty@gmail.com');
-      setPassword('faculty123');
+      setPassword('civic123');
     }
   };
 
@@ -294,9 +294,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onBackToHome })
 
           {/* Explicit Helper Text as requested */}
           <div className="text-[11px] text-[#6B6A75] bg-white/60 p-2.5 rounded-xl border border-[#8DA399]/15 space-y-0.5 font-mono">
-            <p><strong>Citizen:</strong> noor@gmail.com / noor123</p>
-            <p><strong>Admin:</strong> admin@gmail.com / admin123</p>
-            <p><strong>Faculty:</strong> faculty@gmail.com / faculty123</p>
+            <p><strong>Citizen:</strong> noor@gmail.com / civic123</p>
+            <p><strong>Admin:</strong> admin@gmail.com / civic123</p>
+            <p><strong>Faculty:</strong> faculty@gmail.com / civic123</p>
           </div>
         </div>
       </div>

@@ -18,7 +18,6 @@ export interface LocationData {
   lat: number;
   lng: number;
   landmark?: string;
-  neighborhood?: string;
 }
 
 export interface ComplaintCategory {

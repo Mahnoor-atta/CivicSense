@@ -23,12 +23,12 @@ import { ComplaintSubmission, LocationData, PriorityLevel, ComplaintStatus } fro
  * ============================================================================
  */
 export const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 /**
@@ -201,7 +201,6 @@ function getInitialSeedComplaints(): ComplaintSubmission[] {
         streetAddress: 'Main Boulevard, Gulberg III',
         lat: 31.5204,
         lng: 74.3587,
-        neighborhood: 'Gulberg Municipal Zone',
         landmark: 'Liberty Roundabout',
       },
       citizenName: 'Noor',
@@ -225,7 +224,6 @@ function getInitialSeedComplaints(): ComplaintSubmission[] {
         streetAddress: 'Jinnah Avenue, Blue Area',
         lat: 33.7126,
         lng: 73.0652,
-        neighborhood: 'Blue Area Commercial Hub',
         landmark: 'Metro Station 3',
       },
       citizenName: 'Noor',
@@ -254,7 +252,6 @@ function getInitialSeedComplaints(): ComplaintSubmission[] {
         streetAddress: 'Mall Road, Saddar',
         lat: 33.5935,
         lng: 73.0549,
-        neighborhood: 'Rawalpindi Cantt',
         landmark: 'Saddar Bazaar',
       },
       citizenName: 'Noor',
@@ -283,7 +280,6 @@ function getInitialSeedComplaints(): ComplaintSubmission[] {
         streetAddress: 'Shahrah-e-Faisal, Block 6 PECHS',
         lat: 24.8607,
         lng: 67.0011,
-        neighborhood: 'PECHS Municipal Zone',
         landmark: 'Nursery Flyover',
       },
       citizenName: 'Community Resident',
@@ -315,7 +311,6 @@ function getInitialSeedComplaints(): ComplaintSubmission[] {
         streetAddress: 'University Road, Old City',
         lat: 34.0151,
         lng: 71.5249,
-        neighborhood: 'University Town',
       },
       citizenName: 'Noor',
       citizenEmail: 'noor@gmail.com',
