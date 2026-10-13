@@ -240,14 +240,15 @@ export async function forwardComplaintRecord(
 
   try {
     const docRef = doc(db, 'complaints', complaintId);
-    await updateDoc(docRef, {
+    const updateData: any = {
       status: 'Forwarded',
       forwardDeadline: deadline,
-      facultyAssignee: facultyAssignee,
-      adminNotes: adminNotes,
-      forwardedBy: adminEmail,
+      facultyAssignee: facultyAssignee || null,
+      adminNotes: adminNotes || null,
+      forwardedBy: adminEmail || null,
       updatedAt: serverTimestamp(),
-    });
+    };
+    await updateDoc(docRef, updateData);
 
     return { id: complaintId, trackingNumber: '' } as ComplaintSubmission;
   } catch (err) {
@@ -271,13 +272,14 @@ export async function resolveComplaintRecord(
   try {
     console.log('Resolving complaint:', complaintId);
     const docRef = doc(db, 'complaints', complaintId);
-    await updateDoc(docRef, {
+    const updateData: any = {
       status: 'Resolved',
-      resolutionNote: resolutionNote,
-      resolvedBy: facultyEmail,
-      resolutionImageUrl: resolutionImageUrl,
+      resolutionNote: resolutionNote || null,
+      resolvedBy: facultyEmail || null,
+      resolutionImageUrl: resolutionImageUrl || null,
       updatedAt: serverTimestamp(),
-    });
+    };
+    await updateDoc(docRef, updateData);
     console.log('Complaint resolved successfully in Firestore');
 
     return { id: complaintId, trackingNumber: '' } as ComplaintSubmission;
