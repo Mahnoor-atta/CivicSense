@@ -1,0 +1,6 @@
+{
+  "name": "CivicSense - Civic Complaint Form",
+  "description": "A soft, minimalist civic complaint submission form with AI issue triaging, photo preview, location picker, and Firebase integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
