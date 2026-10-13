@@ -32,7 +32,7 @@ interface LandingPageProps {
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#6B6A75] flex flex-col justify-between selection:bg-[#8DA399]/20 selection:text-[#3B3A45]">
+    <div className="min-h-screen bg-[#FDFBF7] text-[#111113] flex flex-col justify-between selection:bg-[#8DA399]/20 selection:text-[#3B3A45]">
       {/* Top Navigation */}
       <header className="sticky top-0 z-40 bg-[#FDFBF7]/90 backdrop-blur-md border-b border-[#8DA399]/20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
@@ -79,7 +79,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             </div>
           </div>
 
-          <p className="text-sm sm:text-base text-[#6B6A75] max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-[#4A4955] max-w-2xl mx-auto leading-relaxed">
             Report road potholes, streetlight outages, litter, or drainage hazards in seconds.
             Powered by smart AI triaging, photographic evidence, verified address locations,
             and transparent workflow dispatch to municipal faculty teams.
@@ -147,7 +147,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <h3 className="text-base font-bold text-[#4A4955]">
                 AI-Powered Auto Triaging
               </h3>
-              <p className="text-xs text-[#6B6A75] leading-relaxed">
+              <p className="text-xs text-[#4A4955] leading-relaxed">
                 Gemini AI analyzes citizen descriptions and attached photos to automatically classify category, municipal department, and urgency priority.
               </p>
             </div>
@@ -160,7 +160,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <h3 className="text-base font-bold text-[#4A4955]">
                 Interactive City Pinning
               </h3>
-              <p className="text-xs text-[#6B6A75] leading-relaxed">
+              <p className="text-xs text-[#4A4955] leading-relaxed">
                 Click directly on the interactive municipal map, browse landmark presets, or acquire instant GPS coordinates for exact repair location dispatch.
               </p>
             </div>
@@ -173,7 +173,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
               <h3 className="text-base font-bold text-[#4A4955]">
                 Transparent Progress Tracking
               </h3>
-              <p className="text-xs text-[#6B6A75] leading-relaxed">
+              <p className="text-xs text-[#4A4955] leading-relaxed">
                 Follow your report through Received, Admin Review, Faculty Dispatch with completion deadlines, and verified resolution with official crew notes.
               </p>
             </div>
@@ -190,7 +190,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             <h2 className="text-2xl font-bold text-[#4A4955]">
               Tailored Experiences for Every Stakeholder
             </h2>
-            <p className="text-xs sm:text-sm text-[#9C9BA8] max-w-lg mx-auto">
+            <p className="text-xs sm:text-sm text-[#4A4955] max-w-lg mx-auto">
               Clean separation of responsibilities guarantees fast resolution and clear accountability.
             </p>
           </div>
@@ -205,7 +205,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <UserCheck className="w-4 h-4 text-[#8DA399]" />
               </div>
               <h4 className="text-sm font-bold text-[#4A4955]">Report & Track</h4>
-              <ul className="text-xs text-[#6B6A75] space-y-2">
+              <ul className="text-xs text-[#4A4955] space-y-2">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#8DA399] shrink-0" />
                   <span>Register complaints with photo previews</span>
@@ -230,7 +230,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <ShieldCheck className="w-4 h-4 text-purple-600" />
               </div>
               <h4 className="text-sm font-bold text-[#4A4955]">Review & Dispatch</h4>
-              <ul className="text-xs text-[#6B6A75] space-y-2">
+              <ul className="text-xs text-[#4A4955] space-y-2">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#8DA399] shrink-0" />
                   <span>Table review panel of all submissions</span>
@@ -255,7 +255,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
                 <Wrench className="w-4 h-4 text-blue-600" />
               </div>
               <h4 className="text-sm font-bold text-[#4A4955]">Execute & Resolve</h4>
-              <ul className="text-xs text-[#6B6A75] space-y-2">
+              <ul className="text-xs text-[#4A4955] space-y-2">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#8DA399] shrink-0" />
                   <span>Dedicated panel showing only forwarded tasks</span>
@@ -279,7 +279,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
             <h3 className="text-2xl font-bold text-[#4A4955]">
               Ready to report or review municipal issues?
             </h3>
-            <p className="text-xs sm:text-sm text-[#6B6A75] max-w-md mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#4A4955] max-w-md mx-auto leading-relaxed">
               Sign in with your role-specific test account to experience the full CivicSense workflow.
             </p>
             <div className="pt-2">
@@ -297,7 +297,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       </main>
 
       {/* Footer */}
-      <footer className="py-6 border-t border-[#8DA399]/20 text-center text-xs text-[#9C9BA8] bg-[#FDFBF7]">
+      <footer className="py-6 border-t border-[#8DA399]/20 text-center text-xs text-[#6B6A75] bg-[#FDFBF7]">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <DoodleHouse className="w-4 h-4 text-[#8DA399]" />

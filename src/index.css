@@ -3,13 +3,13 @@
 @layer base {
   :root {
     --cream-bg: #FDFBF7;
-    --sage-accent: #8DA399;
-    --sage-light: #EBF0ED;
-    --sage-dark: #6E867B;
-    --lavender-text: #2D2C35;
-    --lavender-dark: #1E1D24;
-    --lavender-light: #4A4955;
-    --border-soft: rgba(141, 163, 153, 0.22);
+    --sage-accent: #7E958A;
+    --sage-light: #E8F0EC;
+    --sage-dark: #637B70;
+    --lavender-text: #111113;
+    --lavender-dark: #000000;
+    --lavender-light: #16151A;
+    --border-soft: rgba(126, 149, 138, 0.25);
   }
 
   body {
